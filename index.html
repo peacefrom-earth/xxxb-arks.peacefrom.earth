@@ -416,11 +416,48 @@
             });
         }
 
-        // Initial fetch
-        fetchGoFundMeData();
+document.addEventListener('DOMContentLoaded', function () {
+  // Function to fetch donation data
+  async function fetchDonationData() {
+    try {
+      const response = await fetch('https://YOUR_BACKEND_API_URL/donation-data');
+      if (!response.ok) {
+        throw new Error('Failed to fetch donation data');
+      }
+      const data = await response.json();
+      updateProgressBar(data.amountRaised, data.goalAmount);
+    } catch (error) {
+      console.error('Error fetching donation data:', error);
+    }
+  }
+
+  // Function to update the progress bar and fuel gauge
+  function updateProgressBar(amountRaised, goalAmount) {
+    // Calculate the percentage
+    const percentage = Math.min((amountRaised / goalAmount) * 100, 100);
+
+    // Update the text and width of the progress bar
+    const progressBar = document.querySelector('#progress-bar');
+    if (progressBar) {
+      progressBar.style.width = `${percentage}%`;
+      progressBar.textContent = `$${amountRaised.toLocaleString()} of $${goalAmount.toLocaleString()} (${percentage.toFixed(1)}%)`;
+    }
+
+    // Update the fuel gauge if you have an element for it
+    const fuelGauge = document.querySelector('#fuel-gauge');
+    if (fuelGauge) {
+      // Assuming it's a text-based gauge, update accordingly
+      fuelGauge.textContent = `Fuel Level: ${percentage.toFixed(1)}%`;
+    }
+  }
+
+  // Fetch the data when the page loads
+  fetchDonationData();
+});
+
 
         // Fetch every 5 minutes
-        setInterval(fetchGoFundMeData, 5 * 60 * 1000);
+        setInterval(fetchDonationData, 5 * 60 * 1000);
     </script>
     <script>
         function switchTab(tabId) {
